@@ -25,6 +25,9 @@ temp/
 
 # Cobertura y reportes
 coverage/
+.coverage
+.coverage.*
+htmlcov/
 
 # Dependencias comunes
 node_modules/
@@ -32,6 +35,14 @@ venv/
 .venv/
 __pycache__/
 *.py[cod]
+
+# pytest
+.pytest_cache/
+
+# Base de datos local
+*.db
+*.sqlite
+*.sqlite3
 
 # Archivos compilados y de build
 dist/

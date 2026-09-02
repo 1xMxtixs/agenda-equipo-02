@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda Personal — Equipo 02</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --success-bg: #dcfce7;
+            --success-text: #15803d;
+            --error-bg: #fee2e2;
+            --error-text: #b91c1c;
+            --radius: 8px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            padding: 2rem 1rem;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        header h1 {
+            font-size: 1.75rem;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        header .badge {
+            background: #e0e7ff;
+            color: #4338ca;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.25rem 0.6rem;
+            border-radius: 999px;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 1.6fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        @media (max-width: 860px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .card h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1.25rem;
+            color: #0f172a;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+            color: #334155;
+        }
+
+        label .required {
+            color: #dc2626;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.6rem 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 0.9rem;
+            background: #fff;
+            color: var(--text);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+
+        button {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 0.5rem;
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        button:disabled {
+            background-color: #94a3b8;
+            cursor: not-allowed;
+        }
+
+        .alert {
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius);
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            display: none;
+        }
+
+        .alert.success {
+            background-color: var(--success-bg);
+            color: var(--success-text);
+            border: 1px solid #bbf7d0;
+            display: block;
+        }
+
+        .alert.error {
+            background-color: var(--error-bg);
+            color: var(--error-text);
+            border: 1px solid #fecaca;
+            display: block;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            color: #475569;
+            font-weight: 600;
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+
+        tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 0.5rem;
+            stroke: #94a3b8;
+        }
+
+        .category-tag {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            background: #f1f5f9;
+            color: #475569;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <h1>📇 Agenda Personal <span class="badge">Equipo 02</span></h1>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Práctica P6 — OpenSpec & SDD con FastAPI y SQLite</p>
+            </div>
+            <div>
+                <a href="/docs" target="_blank" style="color: var(--primary); text-decoration: none; font-size: 0.9rem; font-weight: 500;">
+                    📘 Ver Documentación Swagger API &rarr;
+                </a>
+            </div>
+        </header>
+
+        <div id="alert-box" class="alert"></div>
+
+        <div class="layout">
+            <!-- Formulario de Registro (HU-01) -->
+            <section class="card">
+                <h2>Registrar Persona</h2>
+                <form id="persona-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nombre">Nombre <span class="required">*</span></label>
+                            <input type="text" id="nombre" name="nombre" required placeholder="Ej: Carlos">
+                        </div>
+                        <div class="form-group">
+                            <label for="apellidos">Apellidos <span class="required">*</span></label>
+                            <input type="text" id="apellidos" name="apellidos" required placeholder="Ej: Pérez Gómez">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fecha_nacimiento">Fecha de Nacimiento <span style="font-size:0.75rem; color:var(--text-muted);">(YYYY-MM-DD)</span></label>
+                            <input type="date" id="fecha_nacimiento" name="fecha_nacimiento" placeholder="YYYY-MM-DD" pattern="\d{4}-\d{2}-\d{2}">
+                        </div>
+                        <div class="form-group">
+                            <label for="telefono">Teléfono</label>
+                            <input type="tel" id="telefono" name="telefono" placeholder="+56912345678">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="correo_electronico">Correo Electrónico</label>
+                        <input type="email" id="correo_electronico" name="correo_electronico" placeholder="usuario@ejemplo.com">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="categoria">Categoría</label>
+                            <select id="categoria" name="categoria">
+                                <option value="">-- Seleccionar categoría --</option>
+                                <option value="Familia">Familia</option>
+                                <option value="Trabajo">Trabajo</option>
+                                <option value="Amigos">Amigos</option>
+                                <option value="Universidad">Universidad</option>
+                                <option value="Otros">Otros</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="direccion">Dirección</label>
+                            <input type="text" id="direccion" name="direccion" placeholder="Calle, Número, Ciudad">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="comentarios">Comentarios</label>
+                        <textarea id="comentarios" name="comentarios" placeholder="Notas adicionales..."></textarea>
+                    </div>
+
+                    <button type="submit" id="submit-btn">Guardar Persona</button>
+                </form>
+            </section>
+
+            <!-- Listado de Personas (HU-02) -->
+            <section class="card">
+                <h2>
+                    <span>Contactos Guardados</span>
+                    <span id="counter" style="font-size: 0.85rem; color: var(--text-muted); font-weight: normal;">0 contactos</span>
+                </h2>
+
+                <div class="table-responsive">
+                    <table id="personas-table" style="display: none;">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Apellidos y Nombre</th>
+                                <th>Contacto</th>
+                                <th>Categoría</th>
+                            </tr>
+                        </thead>
+                        <tbody id="personas-body">
+                            <!-- Filas dinámicas -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="empty-state" class="empty-state">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <p style="font-weight: 500;">No hay contactos registrados en la agenda.</p>
+                    <p style="font-size: 0.85rem; margin-top: 0.25rem;">Completa el formulario a la izquierda para añadir el primer contacto.</p>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = '/api/personas';
+        const form = document.getElementById('persona-form');
+        const alertBox = document.getElementById('alert-box');
+        const submitBtn = document.getElementById('submit-btn');
+        const table = document.getElementById('personas-table');
+        const tbody = document.getElementById('personas-body');
+        const emptyState = document.getElementById('empty-state');
+        const counter = document.getElementById('counter');
+
+        function showAlert(message, isError = false) {
+            alertBox.textContent = message;
+            alertBox.className = `alert ${isError ? 'error' : 'success'}`;
+            alertBox.style.display = 'block';
+            setTimeout(() => {
+                alertBox.style.display = 'none';
+            }, 5000);
+        }
+
+        async function cargarPersonas() {
+            try {
+                const res = await fetch(API_URL);
+                if (!res.ok) throw new Error('Error al obtener los contactos');
+                const personas = await res.json();
+
+                counter.textContent = `${personas.length} contacto${personas.length === 1 ? '' : 's'}`;
+
+                if (personas.length === 0) {
+                    table.style.display = 'none';
+                    emptyState.style.display = 'block';
+                    tbody.innerHTML = '';
+                    return;
+                }
+
+                emptyState.style.display = 'none';
+                table.style.display = 'table';
+                tbody.innerHTML = '';
+
+                personas.forEach(p => {
+                    const tr = document.createElement('tr');
+                    
+                    const contactoInfo = [];
+                    if (p.telefono) contactoInfo.push(`📞 ${p.telefono}`);
+                    if (p.correo_electronico) contactoInfo.push(`✉️ ${p.correo_electronico}`);
+                    if (contactoInfo.length === 0) contactoInfo.push('<span style="color:#94a3b8">—</span>');
+
+                    tr.innerHTML = `
+                        <td style="color: #64748b; font-weight: 500;">#${p.id}</td>
+                        <td>
+                            <strong>${p.apellidos}</strong>, ${p.nombre}
+                            ${p.fecha_nacimiento ? `<div style="font-size:0.75rem; color:#64748b;">Nac: ${p.fecha_nacimiento}</div>` : ''}
+                        </td>
+                        <td>${contactoInfo.join('<br>')}</td>
+                        <td>
+                            ${p.categoria ? `<span class="category-tag">${p.categoria}</span>` : '<span style="color:#94a3b8">—</span>'}
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (err) {
+                console.error(err);
+                showAlert('No se pudo cargar la lista de contactos.', true);
+            }
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Guardando...';
+
+            const formData = new FormData(form);
+            const data = {};
+            formData.forEach((value, key) => {
+                const val = value.trim();
+                data[key] = val !== '' ? val : null;
+            });
+
+            try {
+                const res = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await res.json();
+
+                if (res.status === 201) {
+                    showAlert(`Contacto ${result.nombre} ${result.apellidos} registrado exitosamente.`);
+                    form.reset();
+                    await cargarPersonas();
+                } else {
+                    let errMsg = result.detail || 'Ocurrió un error al registrar.';
+                    if (Array.isArray(result.detail)) {
+                        errMsg = result.detail.map(d => `${d.loc[d.loc.length-1]}: ${d.msg}`).join(', ');
+                    }
+                    showAlert(`Error: ${errMsg}`, true);
+                }
+            } catch (err) {
+                showAlert('Error de conexión con el servidor.', true);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Guardar Persona';
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', cargarPersonas);
+    </script>
+</body>
+</html>
