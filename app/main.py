@@ -7,7 +7,7 @@ No contiene sentencias SQL (se delegan a app/database.py).
 import os
 import re
 from contextlib import asynccontextmanager
-from datetime import date
+from datetime import date, datetime
 from typing import List, Optional
 from fastapi import FastAPI, HTTPException, status
 from fastapi.staticfiles import StaticFiles
@@ -35,7 +35,7 @@ app = FastAPI(
 class PersonaBase(BaseModel):
     nombre: str = Field(..., min_length=1, description="Nombre de la persona (obligatorio)")
     apellidos: str = Field(..., min_length=1, description="Apellidos de la persona (obligatorio)")
-    fecha_nacimiento: Optional[str] = Field(None, description="Fecha de nacimiento en formato YYYY-MM-DD")
+    fecha_nacimiento: Optional[str] = Field(None, description="Fecha de nacimiento en formato estricto YYYY-MM-DD")
     correo_electronico: Optional[str] = Field(None, description="Correo electrónico válido")
     telefono: Optional[str] = Field(None, description="Teléfono de contacto")
     direccion: Optional[str] = Field(None, description="Dirección")
@@ -66,10 +66,14 @@ class PersonaBase(BaseModel):
         if v is None or v == "":
             return None
         v = v.strip()
+        # Expresión regular estricta para formato YYYY-MM-DD
+        pattern = r"^\d{4}-\d{2}-\d{2}$"
+        if not re.match(pattern, v):
+            raise ValueError("El formato de fecha de nacimiento debe ser estrictamente YYYY-MM-DD")
         try:
-            parsed_date = date.fromisoformat(v)
+            parsed_date = datetime.strptime(v, "%Y-%m-%d").date()
         except ValueError:
-            raise ValueError("Formato de fecha inválido. Utilice YYYY-MM-DD")
+            raise ValueError("La fecha ingresada no corresponde a una fecha válida del calendario")
         if parsed_date > date.today():
             raise ValueError("La fecha de nacimiento no puede ser una fecha futura")
         return v
@@ -93,7 +97,7 @@ class PersonaResponse(PersonaBase):
 def create_persona(persona: PersonaCreate):
     """
     Registra una nueva persona en la base de datos persistente SQLite.
-    Valida campos obligatorios, formato de correo y fecha de nacimiento.
+    Valida campos obligatorios, formato de correo y formato estricto YYYY-MM-DD.
     """
     try:
         created = insert_persona(persona.model_dump())

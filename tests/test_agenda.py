@@ -1,7 +1,7 @@
 """
 Suite de pruebas automatizadas para la aplicación Agenda.
-Cubre los escenarios PR-01 a PR-04 (Registro) y PL-01 a PL-06 (Listado)
-especificados en la práctica P6 y en OpenSpec.
+Cubre los escenarios PR-01 a PR-04 (Registro), PL-01 a PL-06 (Listado)
+y validación estricta de formato de fecha YYYY-MM-DD según OpenSpec.
 """
 
 from unittest.mock import patch
@@ -32,7 +32,7 @@ def client():
 # ==============================================================================
 
 def test_pr01_registrar_persona_con_datos_validos(client):
-    """PR-01: Registrar una persona con datos válidos."""
+    """PR-01: Registrar una persona con datos válidos (incluye fecha YYYY-MM-DD)."""
     payload = {
         "nombre": "Carlos",
         "apellidos": "Pérez Gómez",
@@ -49,6 +49,7 @@ def test_pr01_registrar_persona_con_datos_validos(client):
     assert data["id"] is not None
     assert data["nombre"] == "Carlos"
     assert data["apellidos"] == "Pérez Gómez"
+    assert data["fecha_nacimiento"] == "1990-05-15"
     assert data["correo_electronico"] == "carlos.perez@example.com"
     assert data["telefono"] == "+56912345678"
 
@@ -88,6 +89,26 @@ def test_pr04_rechazar_fecha_nacimiento_futura(client):
     }
     response = client.post("/api/personas", json=payload)
     assert response.status_code == 422
+
+
+def test_fecha_nacimiento_formatos_invalidos(client):
+    """Verifica que el formato YYYY-MM-DD sea exigido estrictamente rechazando formatos inválidos."""
+    # Formato con barras DD/MM/YYYY
+    res_slash = client.post("/api/personas", json={"nombre": "A", "apellidos": "B", "fecha_nacimiento": "15/05/1990"})
+    assert res_slash.status_code == 422
+    assert "YYYY-MM-DD" in str(res_slash.json())
+
+    # Formato con barras YYYY/MM/DD
+    res_slash_iso = client.post("/api/personas", json={"nombre": "A", "apellidos": "B", "fecha_nacimiento": "1990/05/15"})
+    assert res_slash_iso.status_code == 422
+
+    # Formato con mes/día de un dígito YYYY-M-D
+    res_single_digit = client.post("/api/personas", json={"nombre": "A", "apellidos": "B", "fecha_nacimiento": "1990-5-5"})
+    assert res_single_digit.status_code == 422
+
+    # Fecha calendario inexistente (30 de febrero)
+    res_invalid_cal = client.post("/api/personas", json={"nombre": "A", "apellidos": "B", "fecha_nacimiento": "2023-02-30"})
+    assert res_invalid_cal.status_code == 422
 
 
 # ==============================================================================
