@@ -187,6 +187,17 @@ def test_pl05_persona_registrada_aparece_en_listado(client):
     assert created_id in ids
 
 
+def test_persona_inexistente_identificador_ausente_404(client):
+    """Escenario P10: 404 para un identificador ausente.
+
+    AGENDA no expone GET /api/personas/{id} (contrato P8: solo POST y GET
+    listado), por lo que una petición con identificador no tiene ruta y debe
+    responder 404 sin alterar el contrato de la API.
+    """
+    response = client.get("/api/personas/9999")
+    assert response.status_code == 404
+
+
 def test_pl06_gestionar_error_de_consulta(client):
     """PL-06: Gestionar un error de consulta de forma controlada (HTTP 500 sin trazas)."""
     with patch("app.main.get_all_personas", side_effect=Exception("Database failure")):
